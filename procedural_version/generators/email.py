@@ -1,12 +1,37 @@
 # Импортируем домены, которые можно ставить после знака @.
+import re
+
 from procedural_version.data.names_data import EMAIL_DOMAINS
+
 # Импортируем слова, из которых можно начать имя почтового ящика.
 from procedural_version.data.names_data import USERNAME_WORDS
+
 # Импортируем функцию, которая создает random с нужным seed.
 from procedural_version.utils.random_utils import create_random
 
+
 # Объявляем функцию, которая должна вернуть email.
 def email(valid=True, username_length=8, seed=None):
+    if username_length <= 0:
+        return "username_length must be greater than 0"
+
+    if username_length > 8:
+        return "username_length must be 8"
+
+    if seed is not None:
+        random = create_random(seed)
+        return random
+
+    if valid:
+        username = "".join(random.choices(USERNAME_WORDS, int(username_length)))
+        domain = random.choice(EMAIL_DOMAINS)
+        return f"{username}@{domain}"
+
+    if not valid:
+        username = "".join(random.choices(USERNAME_WORDS, int(username_length)))
+        domain = random.choice(EMAIL_DOMAINS)
+        return f"{username}{domain}"
+
     # Что делает функция: возвращает строку email.
     # valid=True значит email должен быть правильным и содержать знак @.
     # valid=False значит email должен быть специально неправильным, например без @.
@@ -25,4 +50,4 @@ def email(valid=True, username_length=8, seed=None):
     # Что проверить в коде: если username_length меньше или равен 0, нужно вызвать ValueError.
     # Что вернуть: строку.
     # Тесты: test_email_validity, test_email_bad_len.
-    pass
+    
